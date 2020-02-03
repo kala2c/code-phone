@@ -104,6 +104,9 @@
     editor.js.setTheme('ace/theme/monokai')
     editor.html.session.setMode("ace/mode/html")
     editor.html.setOptions({
+      enableBasicAutocompletion: true,
+      enableSnippets: true,
+      enableLiveAutocompletion: true,
       enableEmmet: true
     })
     editor.css.session.setMode("ace/mode/css")
@@ -166,15 +169,15 @@
         switch (currentIndex) {
           case '1':
             editor.html.insert(item)
-            editor.html.onFocus()
+            // editor.html.onFocus()
             break
           case '2':
             editor.css.insert(item)
-            editor.css.onFocus()
+            // editor.css.onFocus()
             break
           case '3':
             editor.js.insert(item)
-            editor.css.onFocus()
+            // editor.css.onFocus()
             break
         }
       })
@@ -199,13 +202,17 @@
     tabBtn.addEventListener('click', () => {
       editor.html.onFocus()
       switch (currentIndex) {
-        case 1:
+        case '1':
           editor.html.indent()
           editor.html.onFocus()
           break
-        default:
+        case '2':
           editor.css.indent()
           editor.css.onFocus()
+          break
+        case '3':
+          editor.js.indent()
+          editor.js.onFocus()
           break
       }
     })
