@@ -26,6 +26,18 @@
           <li data-index="3">
             <span>js</span>
           </li>
+          <li>
+            <select name="" id="theme">
+              <option value="monokai">monokai</option>
+              <option value="ambiance">ambiance</option>
+              <option value="chaos">chaos</option>
+              <option value="chrome">chrome</option>
+              <option value="dracula">dracula</option>
+              <option value="tommorrow">tommorrow</option>
+              <option value="solarized_light">solarized_light</option>
+              <option value="solarized_dark">solarized_dark</option>
+            </select>
+          </li>
           <li class="preview-btn">
             <span>预览</span>
           </li>
@@ -63,6 +75,7 @@
     , symbolToggleBtn = document.querySelector('.toggle-btn')
     , tabBtn = document.querySelector('.tab-btn')
     , aceCursor = document.querySelector('.ace_cursor')
+    , theme = document.querySelector('#theme')
     // 打开预览
     let vConsole = null // vConsole
     previewBtn.addEventListener('click', () => {
@@ -127,7 +140,7 @@
       }
       iframe.contentDocument.writeln(script)
     }
-    let currentIndex = 1
+    let currentIndex = '1'
     navList.forEach(nav => {
       nav.addEventListener('click', () => {
         let index = nav.getAttribute('data-index')
@@ -150,16 +163,17 @@
       let div = document.createElement('div')
       div.innerText = item
       div.addEventListener('click', () => {
+        console.log(currentIndex)
         switch (currentIndex) {
-          case 1:
+          case '1':
             editor.html.insert(item)
             editor.html.onFocus()
             break
-          case 2:
+          case '2':
             editor.css.insert(item)
             editor.css.onFocus()
             break
-          case 3:
+          case '3':
             editor.js.insert(item)
             editor.css.onFocus()
             break
@@ -191,6 +205,13 @@
           editor.css.onFocus()
           break
       }
+    })
+    // 修改主题
+    theme.addEventListener('change', function() {
+      let themeName = this.value
+      editor.html.setTheme('ace/theme/'+themeName)
+      editor.css.setTheme('ace/theme/'+themeName)
+      editor.js.setTheme('ace/theme/'+themeName)
     })
   </script>
 </body>

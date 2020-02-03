@@ -48,6 +48,7 @@ body {
   background-color: #5EB878;
 }
 #app .code .nav select {
+  max-width: 60px;
   outline: none;
   color: #fff;
   background-color: #393d49;
