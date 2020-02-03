@@ -33,7 +33,7 @@
               <option value="chaos">chaos</option>
               <option value="chrome">chrome</option>
               <option value="dracula">dracula</option>
-              <option value="tommorrow">tommorrow</option>
+              <option value="tomorrow">tommorrow</option>
               <option value="solarized_light">solarized_light</option>
               <option value="solarized_dark">solarized_dark</option>
             </select>
@@ -160,10 +160,9 @@
       '-', '_', '+', '=', '<', '>', ',', '.', '?', '/', '[', ']', '{', '}', '|', '\\', "\:", "\;"];
     // 没有 # ~
     symbolList.forEach(item => {
-      let div = document.createElement('div')
-      div.innerText = item
-      div.addEventListener('click', () => {
-        console.log(currentIndex)
+      let symbolItem = document.createElement('input')
+      symbolItem.value = item
+      symbolItem.addEventListener('click', () => {
         switch (currentIndex) {
           case '1':
             editor.html.insert(item)
@@ -179,7 +178,10 @@
             break
         }
       })
-      symbolInput.appendChild(div)
+      symbolItem.addEventListener('input', () => {
+        symbolItem.value = item
+      })
+      symbolInput.appendChild(symbolItem)
     })
     // 符号输入表展开与收起
     symbolToggleBtn.addEventListener('click', function() {
@@ -195,6 +197,7 @@
     })
     // 模拟tab键 主要为了emmet
     tabBtn.addEventListener('click', () => {
+      editor.html.onFocus()
       switch (currentIndex) {
         case 1:
           editor.html.indent()
