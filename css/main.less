@@ -1,0 +1,61 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+ul,li {
+  list-style: none;
+}
+html,body {
+  width: 100%;
+  height: 100%;
+}
+#app {
+  height: 100%;
+  .code {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    padding-top: 35px;
+    .nav {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 35px;
+      background-color: #393d49;
+      ul {
+        display: flex;
+        height: 100%;
+        li {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+          color: #fff;
+          text-align: center;
+        }
+      }
+      select {
+        outline: none;
+        color: #fff;
+      }
+    }
+    .editor-group-web {
+      display: flex;
+      width: 300%;
+      height: 100%;
+      .editor {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        transition: transform .6s ease;
+      }
+    }
+  }
+  .preview {
+    width: 100%;
+    height: 100%;
+  }
+}
