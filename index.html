@@ -17,7 +17,7 @@
               <option value="">网页</option>
             </select>
           </li>
-          <li data-index="1">
+          <li class="active" data-index="1">
             <span>html</span>
           </li>
           <li data-index="2">
@@ -78,14 +78,22 @@
       let html = editorWebList[0].querySelector('.ace_content').innerText
       let style = "<style>"+editorWebList[1].querySelector('.ace_content').innerText+"</style>"
       iframe.contentDocument.write(html)
-      iframe.contentDocument.head.innerHTML = style
+      if (iframe.contentWindow.document.head) {
+        iframe.contentWindow.document.head.innerHTML = style
+      }
       let script = "<script>"+editorWebList[2].querySelector('.ace_content').innerText+"</scr"+"ipt>"
       iframe.contentDocument.writeln(script)
     }
+    let currentIndex = 1
     navList.forEach(nav => {
       nav.addEventListener('click', () => {
         let index = nav.getAttribute('data-index')
         if (!index) return
+        if (currentIndex != index) {
+          navList[currentIndex].setAttribute('class', '')
+          navList[index].setAttribute('class', 'active')
+          currentIndex = index
+        }
         editorWebList.forEach(editor => {
           editor.style.transform = "translateX(-"+(index-1)*100+"%)"
         })

@@ -42,9 +42,13 @@ body {
   color: #fff;
   text-align: center;
 }
+#app .code .nav ul li.active {
+  background-color: #5EB878;
+}
 #app .code .nav select {
   outline: none;
   color: #fff;
+  background-color: #393d49;
 }
 #app .code .editor-group-web {
   display: flex;
