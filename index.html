@@ -36,6 +36,10 @@
         <div id="editor-css" class="editor"></div>
         <div id="editor-js" class="editor"></div> 
       </div>
+      <div class="symbol-input">
+        <div class="toggle-btn">&theta;</div>
+        <div class="tab-btn">tab</div>
+      </div>
     </div>
     <div class="preview">
       <iframe id="window" src="" frameborder="0"></iframe>
@@ -47,18 +51,26 @@
   <script src="./node_modules/ace-builds/src-min/ext-language_tools.js"></script>
   <script src="./node_modules/vconsole/dist/vconsole.min.js"></script>
   <script>
-    let vConsole = null
+    // 获取所有html-Element
     let previewBtn = document.querySelector('.preview-btn')
-      , preview = document.querySelector('.preview')
-      , code = document.querySelector('.code')
-      , editorGroupWeb = document.querySelector('.editor-group-web')
-      , editorWebList = editorGroupWeb.querySelectorAll('.editor')
-      , navList = document.querySelector('.nav').querySelectorAll('li')
-      , iframe = document.querySelector('#window')
+    , preview = document.querySelector('.preview')
+    , code = document.querySelector('.code')
+    , editorGroupWeb = document.querySelector('.editor-group-web')
+    , editorWebList = editorGroupWeb.querySelectorAll('.editor')
+    , navList = document.querySelector('.nav').querySelectorAll('li')
+    , iframe = document.querySelector('#window')
+    , symbolInput = document.querySelector('.symbol-input')
+    , symbolToggleBtn = document.querySelector('.toggle-btn')
+    , tabBtn = document.querySelector('.tab-btn')
+    , aceCursor = document.querySelector('.ace_cursor')
+    // 打开预览
+    let vConsole = null // vConsole
     previewBtn.addEventListener('click', () => {
       preview.style.display = 'block'
       code.style.display = 'none'
+      // 将代码拼装渲染到iframe
       render()
+      // 启动vConsole
       if (vConsole === null) {
         vConsole = new VConsole();
         console.log("command框输入“b()”后点击OK关闭预览")
@@ -66,45 +78,14 @@
         vConsole.showSwitch()
       }
     })
-    function b() {
-      preview.style.display = 'none'
-      code.style.display = 'block'
-      vConsole.hideSwitch()
-      vConsole.hide()
-    }
-    function render() {
-      iframe.contentDocument.head.innerHTML = ""
-      iframe.contentDocument.body.innerHTML = ""
-      let html = editorWebList[0].querySelector('.ace_content').innerText
-      let style = "<style>"+editorWebList[1].querySelector('.ace_content').innerText+"</style>"
-      iframe.contentDocument.write(html)
-      if (iframe.contentWindow.document.head) {
-        iframe.contentWindow.document.head.innerHTML = style
-      }
-      let script = "<script>"+editorWebList[2].querySelector('.ace_content').innerText+"</scr"+"ipt>"
-      iframe.contentDocument.writeln(script)
-    }
-    let currentIndex = 1
-    navList.forEach(nav => {
-      nav.addEventListener('click', () => {
-        let index = nav.getAttribute('data-index')
-        if (!index) return
-        if (currentIndex != index) {
-          navList[currentIndex].setAttribute('class', '')
-          navList[index].setAttribute('class', 'active')
-          currentIndex = index
-        }
-        editorWebList.forEach(editor => {
-          editor.style.transform = "translateX(-"+(index-1)*100+"%)"
-        })
-      })
-    })
+    // 渲染编辑器
     ace.require('ace/ext/language_tools');
     const editor = {
       html: ace.edit("editor-html"),
       css: ace.edit("editor-css"),
       js: ace.edit("editor-js")
     };
+    // 设置主题模式及属性
     editor.html.setTheme('ace/theme/monokai')
     editor.css.setTheme('ace/theme/monokai')
     editor.js.setTheme('ace/theme/monokai')
@@ -123,6 +104,93 @@
       enableBasicAutocompletion: true,
       enableSnippets: true,
       enableLiveAutocompletion: true
+    })
+    function b() {
+      preview.style.display = 'none'
+      code.style.display = 'block'
+      vConsole.hideSwitch()
+      vConsole.hide()
+    }
+    function render() {
+      iframe.contentDocument.head.innerHTML = ""
+      iframe.contentDocument.body.innerHTML = ""
+      // let html = editorWebList[0].querySelector('.ace_content').innerText
+      // let style = "<style>"+editorWebList[1].querySelector('.ace_content').innerText+"</style>"
+      // let script = "<script>"+editorWebList[2].querySelector('.ace_content').innerText+"</scr"+"ipt>"
+      let html = editor.html.getValue()
+      let style = "<style>"+editor.css.getValue()+"</style>"
+      // script闭合便签要拆开 不然会报错 
+      let script = "<script>"+editor.js.getValue()+"</scr"+"ipt>"
+      iframe.contentDocument.write(html)
+      if (iframe.contentWindow.document.head) {
+        iframe.contentWindow.document.head.innerHTML = style
+      }
+      iframe.contentDocument.writeln(script)
+    }
+    let currentIndex = 1
+    navList.forEach(nav => {
+      nav.addEventListener('click', () => {
+        let index = nav.getAttribute('data-index')
+        if (!index) return
+        if (currentIndex != index) {
+          navList[currentIndex].setAttribute('class', '')
+          navList[index].setAttribute('class', 'active')
+          currentIndex = index
+        }
+        editorWebList.forEach(editor => {
+          editor.style.transform = "translateX(-"+(index-1)*100+"%)"
+        })
+      })
+    })
+    // 渲染符号
+    symbolList = ['`', '!', '@', '$', '%', '^', '&', '*', '(', ')', 
+      '-', '_', '+', '=', '<', '>', ',', '.', '?', '/', '[', ']', '{', '}', '|', '\\', "\:", "\;"];
+    // 没有 # ~
+    symbolList.forEach(item => {
+      let div = document.createElement('div')
+      div.innerText = item
+      div.addEventListener('click', () => {
+        switch (currentIndex) {
+          case 1:
+            editor.html.insert(item)
+            editor.html.onFocus()
+            break
+          case 2:
+            editor.css.insert(item)
+            editor.css.onFocus()
+            break
+          case 3:
+            editor.js.insert(item)
+            editor.css.onFocus()
+            break
+        }
+      })
+      symbolInput.appendChild(div)
+    })
+    // 符号输入表展开与收起
+    symbolToggleBtn.addEventListener('click', function() {
+      let unflodHeight = '75px'
+      let flogHeight = '50px'
+      if (symbolInput.style.height === unflodHeight) {
+        code.style.paddingBottom = flogHeight
+        symbolInput.style.height = flogHeight
+      } else {
+        code.style.paddingBottom = unflodHeight
+        symbolInput.style.height = unflodHeight
+      }
+    })
+    // 模拟tab键 主要为了emmet
+    tabBtn.addEventListener('click', () => {
+      switch (currentIndex) {
+        case 1:
+          editor.html.indent()
+          editor.html.onFocus()
+          break
+        default:
+          editor.css.indent()
+          editor.css.onFocus()
+          break
+      }
     })
   </script>
 </body>
