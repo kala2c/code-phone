@@ -49,8 +49,10 @@
         <div id="editor-js" class="editor"></div> 
       </div>
       <div class="symbol-input">
-        <div class="toggle-btn">&theta;</div>
-        <div class="tab-btn">tab</div>
+        <input type="text" class="toggle-btn" value="&theta;">
+        <!-- <div class="toggle-btn"></div> -->
+        <input type="text" class="tab-btn" value="tab">
+        <!-- <div class="tab-btn">tab</div> -->
       </div>
     </div>
     <div class="preview">
@@ -136,6 +138,9 @@
       let html = editor.html.getValue()
       let style = "<style>"+editor.css.getValue()+"</style>"
       // script闭合便签要拆开 不然会报错 
+
+      // let script = "+<script src='https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js'></scr"+"ipt>\
+      // <script>vConsole=new VConsole();</scr"+"ipt>"
       let script = "<script>"+editor.js.getValue()+"</scr"+"ipt>"
       iframe.contentDocument.write(html)
       if (iframe.contentWindow.document.head) {
