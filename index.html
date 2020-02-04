@@ -165,9 +165,9 @@
       if (this.value.length < 1) {
         editor.current.execCommand('backspace')
       } else {
-        editor.current.insert(this.value.split("")[1])
-        console.log(this.value)
+        editor.current.insert(this.value.substr(1))
       }
+      console.log(this.value)
       this.value = "v"
     })
     vInput.addEventListener('keydown', function() {

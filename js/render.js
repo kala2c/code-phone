@@ -2,6 +2,12 @@ function render(doc) {
   let html = editor.html.getValue()
   let style = editor.css.getValue()
   let script = editor.js.getValue()
+  if (doc.head) {
+    doc.head.innerHTML = ""
+  }
+  if (doc.body) {
+    doc.body.innerHTML = ""
+  }
   doc.write(`
   <!DOCTYPE html>
   <html lang="zh">
@@ -15,9 +21,9 @@ function render(doc) {
     </style>
   </head>
   <body>
-  </body>
   ${html}
   <script>${script}</script>
+  </body>
   </html>
   `)  
 }
