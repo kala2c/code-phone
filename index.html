@@ -163,12 +163,12 @@
     // 编辑器失焦时键盘输入
     vInput.addEventListener('input', function() {
       if (this.value.length < 1) {
-        editor.current.execCommand('del')
+        editor.current.execCommand('backspace')
       } else {
         editor.current.insert(this.value.split("")[1])
         console.log(this.value)
-        this.value = "v"
       }
+      this.value = "v"
     })
     vInput.addEventListener('keydown', function() {
       console.log(event.key)
@@ -211,11 +211,13 @@
         code.style.paddingBottom = unflodHeight
         symbolInput.style.height = unflodHeight
       }
+      vInput.focus()
     })
     // 模拟tab键 主要为了emmet 但是没用
     tabBtn.addEventListener('click', () => {
       editor.current.indent()
       editor.current.onFocus()
+      vInput.focus()
     })
     // 修改主题
     theme.addEventListener('change', function() {
