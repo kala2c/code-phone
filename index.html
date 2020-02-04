@@ -64,6 +64,7 @@
   <script src="./node_modules/ace-builds/src-min/ext-emmet.js"></script>
   <script src="./node_modules/ace-builds/src-min/ext-language_tools.js"></script>
   <script src="./node_modules/vconsole/dist/vconsole.min.js"></script>
+  <script src="./js/render.js"></script>
   <script>
     // 获取所有html-Element
     let previewBtn = document.querySelector('.preview-btn')
@@ -79,12 +80,12 @@
     , aceCursor = document.querySelector('.ace_cursor')
     , theme = document.querySelector('#theme')
     // 打开预览
-    let vConsole = null // vConsole
+    let vConsole = null
     previewBtn.addEventListener('click', () => {
       preview.style.display = 'block'
       code.style.display = 'none'
       // 将代码拼装渲染到iframe
-      render()
+      render(iframe.contentDocument)
       // 启动vConsole
       if (vConsole === null) {
         vConsole = new VConsole();
@@ -98,8 +99,10 @@
     const editor = {
       html: ace.edit("editor-html"),
       css: ace.edit("editor-css"),
-      js: ace.edit("editor-js")
-    };
+      js: ace.edit("editor-js"),
+      current: null
+    }
+    editor.current = editor.html
     // 设置主题模式及属性
     editor.html.setTheme('ace/theme/monokai')
     editor.css.setTheme('ace/theme/monokai')
@@ -129,25 +132,6 @@
       vConsole.hideSwitch()
       vConsole.hide()
     }
-    function render() {
-      iframe.contentDocument.head.innerHTML = ""
-      iframe.contentDocument.body.innerHTML = ""
-      // let html = editorWebList[0].querySelector('.ace_content').innerText
-      // let style = "<style>"+editorWebList[1].querySelector('.ace_content').innerText+"</style>"
-      // let script = "<script>"+editorWebList[2].querySelector('.ace_content').innerText+"</scr"+"ipt>"
-      let html = editor.html.getValue()
-      let style = "<style>"+editor.css.getValue()+"</style>"
-      // script闭合便签要拆开 不然会报错 
-
-      // let script = "+<script src='https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js'></scr"+"ipt>\
-      // <script>vConsole=new VConsole();</scr"+"ipt>"
-      let script = "<script>"+editor.js.getValue()+"</scr"+"ipt>"
-      iframe.contentDocument.write(html)
-      if (iframe.contentWindow.document.head) {
-        iframe.contentWindow.document.head.innerHTML = style
-      }
-      iframe.contentDocument.writeln(script)
-    }
     let currentIndex = '1'
     navList.forEach(nav => {
       nav.addEventListener('click', () => {
@@ -161,31 +145,47 @@
         editorWebList.forEach(editor => {
           editor.style.transform = "translateX(-"+(index-1)*100+"%)"
         })
-      })
-    })
-    // 渲染符号
-    symbolList = ['`', '!', '@', '$', '%', '^', '&', '*', '(', ')', 
-      '-', '_', '+', '=', '<', '>', ',', '.', '?', '/', '[', ']', '{', '}', '|', '\\', "\:", "\;"];
-    // 没有 # ~
-    symbolList.forEach(item => {
-      let symbolItem = document.createElement('input')
-      symbolItem.value = item
-      symbolItem.addEventListener('click', () => {
         switch (currentIndex) {
           case '1':
-            editor.html.insert(item)
-            // editor.html.onFocus()
+            editor.current = editor.html
             break
           case '2':
-            editor.css.insert(item)
-            // editor.css.onFocus()
+            editor.current = editor.css
             break
           case '3':
-            editor.js.insert(item)
-            // editor.css.onFocus()
+            editor.current = editor.js
             break
         }
       })
+    })
+    // 编辑器失焦时键盘输入函数
+    function inputHandle() {
+      if (event.key.length < 2) {
+        editor.current.insert(event.key)
+      }
+    }
+    // 渲染符号
+    symbolList = ['`', '!', '@', '$', '%', '^', '&', '*', '(', ')', 
+      '-', '_', '+', '=', '<', '>', ',', '#', '?', '/', '[', ']', '{', '}', '|', '\\', "\:", "\;"];
+    // 没有 . 和 ~
+    let focusHandle = false
+    symbolList.forEach(item => {
+      let symbolItem = document.createElement('input')
+      symbolItem.value = item
+      symbolItem.oncopy = function() { return false }
+      symbolItem.addEventListener('click', () => {
+        editor.current.insert(item)
+        editor.current.onFocus()
+      })
+      symbolItem.addEventListener('blur', () => {
+        focusHandle = false
+        document.removeEventListener('keydown', inputHandle)
+      })
+      symbolItem.addEventListener('focus', () => {
+        focusHandle = true
+        document.addEventListener('keydown', inputHandle)
+      })
+      // 使符号输入的值不可修改
       symbolItem.addEventListener('input', () => {
         symbolItem.value = item
       })
@@ -203,23 +203,10 @@
         symbolInput.style.height = unflodHeight
       }
     })
-    // 模拟tab键 主要为了emmet
+    // 模拟tab键 主要为了emmet 但是没用
     tabBtn.addEventListener('click', () => {
-      editor.html.onFocus()
-      switch (currentIndex) {
-        case '1':
-          editor.html.indent()
-          editor.html.onFocus()
-          break
-        case '2':
-          editor.css.indent()
-          editor.css.onFocus()
-          break
-        case '3':
-          editor.js.indent()
-          editor.js.onFocus()
-          break
-      }
+      editor.current.indent()
+      editor.current.onFocus()
     })
     // 修改主题
     theme.addEventListener('change', function() {
