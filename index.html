@@ -52,10 +52,10 @@
         <!-- <input type="text" class="toggle-btn" value="&theta;"> -->
         <div class="toggle-btn">&theta;</div>
         <!-- <input type="text" class="tab-btn" value="tab"> -->
-        <div class="tab-btn">tab</div>
+        <!-- <div class="tab-btn">tab</div> -->
       </div>
     </div>
-    <textarea id="v-input">v</textarea>
+    <textarea id="v-input"></textarea>
     <div class="preview">
       <iframe id="window" src="./preview.html" frameborder="0"></iframe>
       <div class="toolbar">
@@ -179,6 +179,7 @@
         editor.current.insert(this.value.substr(1))
       }
       console.log(this.value)
+      this.focus()
       this.value = "v"
     })
     vInput.addEventListener('keydown', function() {
@@ -191,16 +192,19 @@
       }
     })
     // 渲染符号
-    symbolList = ['`', '!', '@', '$', '%', '^', '&', '*', '(', ')', 
-      '-', '_', '+', '=', '<', '>', ',', '#', '?', '/', '[', ']', '{', '}', '|', '\\', "\:", "\;"];
-    // 没有 . 和 ~
+    symbolList = ['\'', '\"', '+', '=', '<', '>', '(', '[', '{',
+              '#','\:', '\;', '!', '$', '|', '&', ')', ']', '}',
+              '*', '-', '_',  '?', '%', '/', ',', '\\','`', '.'];
+    // 没有 . 、 ~ 、^ @ 
     symbolList.forEach(item => {
       let symbolItem = document.createElement('div')
       symbolItem.innerText = item
       symbolItem.addEventListener('click', () => {
         editor.current.insert(item)
         editor.current.onFocus()
+        // input标签聚焦后再赋值可以把光标移动到最后
         vInput.focus()
+        vInput.value = 'v'
       })
       symbolInput.appendChild(symbolItem)
     })
