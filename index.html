@@ -57,14 +57,17 @@
     </div>
     <textarea id="v-input">v</textarea>
     <div class="preview">
-      <iframe id="window" src="" frameborder="0"></iframe>
+      <iframe id="window" src="./preview.html" frameborder="0"></iframe>
+      <div class="toolbar">
+        <div class="close-preview-btn"><img src="./images/back.gif" alt=""></div>
+        <div class="refresh-preview-btn"><img src="./images/refresh.gif" alt=""></div>
+      </div>
     </div>
   </div>
   <script src="./lib/emmet.js"></script>
   <script src="./node_modules/ace-builds/src-min/ace.js"></script>
   <script src="./node_modules/ace-builds/src-min/ext-emmet.js"></script>
   <script src="./node_modules/ace-builds/src-min/ext-language_tools.js"></script>
-  <script src="./node_modules/vconsole/dist/vconsole.min.js"></script>
   <script src="./js/render.js"></script>
   <script>
     // 获取所有html-Element
@@ -81,20 +84,22 @@
     , aceCursor = document.querySelector('.ace_cursor')
     , theme = document.querySelector('#theme')
     , vInput = document.querySelector('#v-input')
+    , closePreviewBtn = document.querySelector('.close-preview-btn') 
+    , refreshPreviewBtn = document.querySelector('.refresh-preview-btn') 
     // 打开预览
-    let vConsole = null
     previewBtn.addEventListener('click', () => {
+      render()
       preview.style.display = 'block'
       code.style.display = 'none'
-      // 将代码拼装渲染到iframe
-      render(iframe.contentDocument)
-      // 启动vConsole
-      if (vConsole === null) {
-        vConsole = new VConsole();
-        console.log("command框输入“b()”后点击OK关闭预览")
-      } else {
-        vConsole.showSwitch()
-      }
+      iframe.contentWindow.location.reload()
+    })
+    // 返回和刷新
+    closePreviewBtn.addEventListener('click', function() {
+      preview.style.display = 'none'
+      code.style.display = 'block'
+    })
+    refreshPreviewBtn.addEventListener('click', function() {
+      iframe.contentWindow.location.reload()
     })
     // 渲染编辑器
     ace.require('ace/ext/language_tools');
@@ -128,12 +133,17 @@
       enableSnippets: true,
       enableLiveAutocompletion: true
     })
-    function b() {
-      preview.style.display = 'none'
-      code.style.display = 'block'
-      vConsole.hideSwitch()
-      vConsole.hide()
+    // 代码记忆
+    if (localStorage.getItem('code-html')) {
+      editor.html.setValue(localStorage.getItem('code-html'))
     }
+    if (localStorage.getItem('code-css')) {
+      editor.css.setValue(localStorage.getItem('code-css'))
+    }
+    if (localStorage.getItem('code-js')) {
+      editor.js.setValue(localStorage.getItem('code-js'))
+    }
+    // 点击tab栏切换编辑器
     let currentIndex = '1'
     navList.forEach(nav => {
       nav.addEventListener('click', () => {
@@ -160,6 +170,7 @@
         }
       })
     })
+    vInput.oncopy = function() { return false }
     // 编辑器失焦时键盘输入
     vInput.addEventListener('input', function() {
       if (this.value.length < 1) {
@@ -184,9 +195,6 @@
       '-', '_', '+', '=', '<', '>', ',', '#', '?', '/', '[', ']', '{', '}', '|', '\\', "\:", "\;"];
     // 没有 . 和 ~
     symbolList.forEach(item => {
-      // let symbolItem = document.createElement('input')
-      // symbolItem.value = item
-      // symbolItem.oncopy = function() { return false }
       let symbolItem = document.createElement('div')
       symbolItem.innerText = item
       symbolItem.addEventListener('click', () => {
@@ -194,10 +202,6 @@
         editor.current.onFocus()
         vInput.focus()
       })
-      // 使符号输入的值不可修改
-      // symbolItem.addEventListener('input', () => {
-      //   symbolItem.value = item
-      // })
       symbolInput.appendChild(symbolItem)
     })
     // 符号输入表展开与收起

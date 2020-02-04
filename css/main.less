@@ -96,11 +96,30 @@ html,body {
     width: 50px;
   }
   .preview {
+    position: relative;
     width: 100%;
     height: 100%;
     iframe {
       width: 100%;
       height: 100%;
+    }
+    .toolbar {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 60px;
+      height: 30px;
+      opacity: .7;
+      .close-preview-btn,
+      .refresh-preview-btn {
+        float: left;
+        width: 30px;
+        height: 30px;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
     }
   }
 }
