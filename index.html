@@ -49,12 +49,13 @@
         <div id="editor-js" class="editor"></div> 
       </div>
       <div class="symbol-input">
-        <input type="text" class="toggle-btn" value="&theta;">
-        <!-- <div class="toggle-btn"></div> -->
-        <input type="text" class="tab-btn" value="tab">
-        <!-- <div class="tab-btn">tab</div> -->
+        <!-- <input type="text" class="toggle-btn" value="&theta;"> -->
+        <div class="toggle-btn">&theta;</div>
+        <!-- <input type="text" class="tab-btn" value="tab"> -->
+        <div class="tab-btn">tab</div>
       </div>
     </div>
+    <textarea id="v-input">v</textarea>
     <div class="preview">
       <iframe id="window" src="" frameborder="0"></iframe>
     </div>
@@ -79,6 +80,7 @@
     , tabBtn = document.querySelector('.tab-btn')
     , aceCursor = document.querySelector('.ace_cursor')
     , theme = document.querySelector('#theme')
+    , vInput = document.querySelector('#v-input')
     // 打开预览
     let vConsole = null
     previewBtn.addEventListener('click', () => {
@@ -158,37 +160,44 @@
         }
       })
     })
-    // 编辑器失焦时键盘输入函数
-    function inputHandle() {
-      if (event.key.length < 2) {
-        editor.current.insert(event.key)
+    // 编辑器失焦时键盘输入
+    vInput.addEventListener('input', function() {
+      if (this.value.length < 1) {
+        editor.current.execCommand('del')
+      } else {
+        editor.current.insert(this.value.split("")[1])
+        console.log(this.value)
+        this.value = "v"
       }
-    }
+    })
+    vInput.addEventListener('keydown', function() {
+      console.log(event.key)
+      if (event.key == 'Tab') {
+        editor.current.indent()
+        setTimeout(() => {
+          vInput.focus()
+        }, 100)
+      }
+    })
     // 渲染符号
     symbolList = ['`', '!', '@', '$', '%', '^', '&', '*', '(', ')', 
       '-', '_', '+', '=', '<', '>', ',', '#', '?', '/', '[', ']', '{', '}', '|', '\\', "\:", "\;"];
     // 没有 . 和 ~
-    let focusHandle = false
     symbolList.forEach(item => {
-      let symbolItem = document.createElement('input')
-      symbolItem.value = item
-      symbolItem.oncopy = function() { return false }
+      // let symbolItem = document.createElement('input')
+      // symbolItem.value = item
+      // symbolItem.oncopy = function() { return false }
+      let symbolItem = document.createElement('div')
+      symbolItem.innerText = item
       symbolItem.addEventListener('click', () => {
         editor.current.insert(item)
         editor.current.onFocus()
-      })
-      symbolItem.addEventListener('blur', () => {
-        focusHandle = false
-        document.removeEventListener('keydown', inputHandle)
-      })
-      symbolItem.addEventListener('focus', () => {
-        focusHandle = true
-        document.addEventListener('keydown', inputHandle)
+        vInput.focus()
       })
       // 使符号输入的值不可修改
-      symbolItem.addEventListener('input', () => {
-        symbolItem.value = item
-      })
+      // symbolItem.addEventListener('input', () => {
+      //   symbolItem.value = item
+      // })
       symbolInput.appendChild(symbolItem)
     })
     // 符号输入表展开与收起
