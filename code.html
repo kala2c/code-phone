@@ -88,13 +88,30 @@
     , preview    = q('.preview')
     , iframe     = q('#window')
     // 预览界面的工具
+    , toolbar = q('.toolbar')
     , closePreviewBtn   = q('.close-preview-btn') 
     , refreshPreviewBtn = q('.refresh-preview-btn') 
     // 打开预览
+    let timeEle = 800
     previewBtn.addEventListener('click', () => {
       render()
-      preview.style.display = 'block'
-      code.style.display = 'none'
+      toolbar.style.display = 'block'
+      preview.style.border = '1px solid #333'
+      code.style.border = '1px solid #333'
+      preview.style.transform = 'scale(0.8)'
+      code.style.transform = 'scale(0.8)'
+      setTimeout(() => {
+        preview.style.transform = 'scale(0.8) translateX(-125%)'
+        code.style.transform = 'scale(0.8) translateX(-125%)'
+      }, timeEle)
+      setTimeout(() => {
+        preview.style.transform = 'scale(1) translateX(-100%)'
+        code.style.transform = 'scale(1) translateX(-100%)'
+      }, timeEle*2)
+      setTimeout(() => {
+        preview.style.border = 'none'
+        code.style.border = 'none'
+      }, timeEle*3)
       iframe.contentWindow.location.reload()
     })
     function render() {
@@ -107,9 +124,27 @@
     }
     // 预览界面返回编辑器
     closePreviewBtn.addEventListener('click', function() {
-      preview.style.display = 'none'
-      code.style.display = 'block'
+      // preview.style.display = 'none'
+      // code.style.display = 'block'
+      preview.style.border = '1px solid #333'
+      code.style.border = '1px solid #333'
+      preview.style.transform = 'scale(0.8) translateX(-125%)'
+      code.style.transform = 'scale(0.8) translateX(-125%)'
+      setTimeout(() => {
+        preview.style.transform = 'scale(0.8) translateX(0)'
+        code.style.transform = 'scale(0.8) translateX(0)'
+      }, timeEle)
+      setTimeout(() => {
+        preview.style.transform = 'scale(1) translateX(0)'
+        code.style.transform = 'scale(1) translateX(0)'
+      }, timeEle*2)
+      setTimeout(() => {
+        preview.style.border = 'none'
+        code.style.border = 'none'
+      }, timeEle*3)
     })
+    // 预览界面 - 编辑器 切换动画
+    function animate() {}
     // 预览界面刷新
     refreshPreviewBtn.addEventListener('click', function() {
       iframe.contentWindow.location.reload()

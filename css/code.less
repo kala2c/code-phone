@@ -16,9 +16,22 @@ html,body {
   overflow: hidden;
 }
 #app {
+  // position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200%;
   height: 100%;
+  .code, 
+  .preview {
+    transition: transform .8s ease;
+    // transform: scale(0.8) translateX(-70%);
+    // border: 1px solid #333;
+  }
   .code {
-    position: relative;
+    // position: absolute;
+    // top: 0;
+    // left: 0;
     box-sizing: border-box;
     width: 100%;
     height: 100%;
@@ -101,8 +114,10 @@ html,body {
     width: 50px;
   }
   .preview {
-    position: relative;
-    display: none;
+    // position: absolute;
+    // top: 0;
+    // left: 100%;
+    // display: none;
     width: 100%;
     height: 100%;
     iframe {
@@ -110,6 +125,7 @@ html,body {
       height: 100%;
     }
     .toolbar {
+      display: none;
       position: absolute;
       bottom: 80px;
       right: 0;

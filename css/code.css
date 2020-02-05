@@ -13,10 +13,17 @@ body {
   overflow: hidden;
 }
 #app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200%;
   height: 100%;
 }
+#app .code,
+#app .preview {
+  transition: transform 0.8s ease;
+}
 #app .code {
-  position: relative;
   box-sizing: border-box;
   width: 100%;
   height: 100%;
@@ -99,8 +106,6 @@ body {
   width: 50px;
 }
 #app .preview {
-  position: relative;
-  display: none;
   width: 100%;
   height: 100%;
 }
@@ -109,6 +114,7 @@ body {
   height: 100%;
 }
 #app .preview .toolbar {
+  display: none;
   position: absolute;
   bottom: 80px;
   right: 0;
